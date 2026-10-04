@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#FFC58F">
+
+    <title>DP BOSS - Number Prediction</title>
+
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '1691783049318782');
+    fbq('track', 'PageView');
+    </script>
+
+    <noscript>
+        <img height="1" width="1" style="display:none"
+        src="https://www.facebook.com/tr?id=1691783049318782&ev=PageView&noscript=1"
+        />
+    </noscript>
+    <!-- End Meta Pixel Code -->
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #ffc58f;
+            overflow: hidden;
+        }
+
+        .page {
+            width: 100%;
+            height: 100vh;
+            height: 100svh;
+
+            position: relative;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            background:
+                radial-gradient(
+                    circle at 50% 45%,
+                    rgba(255,255,255,0.14),
+                    transparent 42%
+                ),
+                linear-gradient(
+                    180deg,
+                    #ffc995 0%,
+                    #ffc48d 50%,
+                    #ffbe84 100%
+                );
+
+            overflow: hidden;
+        }
+
+
+        /* ==========================================
+           BACKGROUND DECORATION
+        ========================================== */
+
+        .circle-one {
+            position: absolute;
+
+            width: 260px;
+            height: 260px;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,0.10);
+
+            top: -120px;
+            left: -120px;
+
+            filter: blur(5px);
+        }
+
+        .circle-two {
+            position: absolute;
+
+            width: 230px;
+            height: 230px;
+
+            border-radius: 50%;
+
+            background: rgba(255,255,255,0.08);
+
+            right: -110px;
+            bottom: -90px;
+
+            filter: blur(5px);
+        }
+
+
+        /* ==========================================
+           MAIN CONTENT
+        ========================================== */
+
+        .content {
+            width: 100%;
+            max-width: 600px;
+
+            height: 100%;
+
+            padding: 25px 20px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            position: relative;
+            z-index: 2;
+        }
+
+
+        /* ==========================================
+           LOGO / BRAND
+        ========================================== */
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 5px;
+        }
+
+        .dp {
+            font-family: "Brush Script MT",
+                         "Segoe Script",
+                         cursive;
+
+            font-size: 76px;
+
+            line-height: 0.8;
+
+            font-weight: bold;
+
+            font-style: italic;
+
+            color: #f00689;
+
+            letter-spacing: -8px;
+
+            transform: rotate(-5deg);
+
+            text-shadow:
+                0 3px 8px rgba(180,0,90,0.15);
+
+            margin-right: 12px;
+        }
+
+        .boss {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .boss-name {
+            font-size: 35px;
+
+            font-weight: 900;
+
+            color: #080808;
+
+            letter-spacing: -1.5px;
+
+            line-height: 1;
+        }
+
+        .boss-sub {
+            font-size: 10px;
+
+            font-weight: bold;
+
+            letter-spacing: 3px;
+
+            color: rgba(0,0,0,0.55);
+
+            margin-top: 7px;
+        }
+
+
+        /* ==========================================
+           CENTER CONTENT
+        ========================================== */
+
+        .middle {
+            position: absolute;
+
+            top: 50%;
+            left: 50%;
+
+            transform:
+                translate(-50%, -50%);
+
+            width: calc(100% - 40px);
+
+            max-width: 450px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            text-align: center;
+        }
+
+
+        /* ==========================================
+           LABEL
+        ========================================== */
+
+        .label {
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding:
+                8px 14px;
+
+            border-radius: 50px;
+
+            background:
+                rgba(255,255,255,0.25);
+
+            border:
+                1px solid rgba(255,255,255,0.45);
+
+            color: #111;
+
+            font-size: 10px;
+
+            font-weight: 800;
+
+            letter-spacing: 1.5px;
+
+            margin-bottom: 18px;
+        }
+
+        .dot {
+            width: 7px;
+            height: 7px;
+
+            border-radius: 50%;
+
+            background: #16b85c;
+
+            box-shadow:
+                0 0 0 4px rgba(22,184,92,0.12);
+        }
+
+
+        /* ==========================================
+           HEADING
+        ========================================== */
+
+        h1 {
+            font-size:
+                clamp(36px, 10vw, 58px);
+
+            line-height: 1.02;
+
+            font-weight: 900;
+
+            letter-spacing: -2px;
+
+            color: #111;
+        }
+
+        h1 span {
+            color: #ed087f;
+        }
+
+
+        /* ==========================================
+           DESCRIPTION
+        ========================================== */
+
+        .description {
+            max-width: 390px;
+
+            margin-top: 17px;
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            font-weight: 500;
+
+            color:
+                rgba(0,0,0,0.68);
+        }
+
+
+        /* ==========================================
+           TELEGRAM BUTTON
+        ========================================== */
+
+        .telegram {
+            width: 100%;
+
+            max-width: 390px;
+
+            height: 78px;
+
+            margin-top: 28px;
+
+            display: flex;
+
+            align-items: center;
+
+            padding: 9px 16px 9px 10px;
+
+            border-radius: 50px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #26a5e4,
+                    #168dcc
+                );
+
+            border:
+                2px solid rgba(255,255,255,0.65);
+
+            box-shadow:
+                0 15px 35px
+                rgba(12,126,190,0.30),
+
+                inset 0 1px 0
+                rgba(255,255,255,0.4);
+
+            color: white;
+
+            text-decoration: none;
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+            animation:
+                floatButton 3s ease-in-out infinite;
+        }
+
+
+        .telegram:hover {
+            transform:
+                translateY(-3px)
+                scale(1.015);
+
+            box-shadow:
+                0 20px 45px
+                rgba(12,126,190,0.38);
+        }
+
+
+        .telegram:active {
+            transform: scale(0.96);
+        }
+
+
+        /* ==========================================
+           TELEGRAM ICON
+        ========================================== */
+
+        .telegram-icon {
+            width: 58px;
+            height: 58px;
+
+            min-width: 58px;
+
+            border-radius: 50%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            background:
+                rgba(255,255,255,0.18);
+
+            border:
+                1px solid rgba(255,255,255,0.35);
+
+            box-shadow:
+                inset 0 2px 5px
+                rgba(255,255,255,0.25);
+        }
+
+        .telegram-icon svg {
+            width: 33px;
+            height: 33px;
+
+            fill: white;
+        }
+
+
+        /* ==========================================
+           BUTTON TEXT
+        ========================================== */
+
+        .telegram-text {
+            flex: 1;
+
+            text-align: center;
+        }
+
+        .join-text {
+            display: block;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            letter-spacing: 2px;
+
+            margin-bottom: 3px;
+        }
+
+        .telegram-title {
+            display: block;
+
+            font-size: 27px;
+
+            line-height: 1;
+
+            font-weight: 900;
+
+            letter-spacing: 1px;
+        }
+
+
+        /* ==========================================
+           ARROW
+        ========================================== */
+
+        .arrow {
+            font-size: 31px;
+
+            font-weight: 900;
+
+            margin-left: 5px;
+
+            opacity: 0.95;
+        }
+
+
+        /* ==========================================
+           BOTTOM TEXT
+        ========================================== */
+
+        .bottom {
+            position: absolute;
+
+            bottom: 18px;
+
+            left: 0;
+
+            width: 100%;
+
+            text-align: center;
+
+            padding: 0 20px;
+
+            font-size: 10px;
+
+            line-height: 1.5;
+
+            color:
+                rgba(0,0,0,0.45);
+        }
+
+
+        /* ==========================================
+           ANIMATION
+        ========================================== */
+
+        @keyframes floatButton {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-4px);
+            }
+
+        }
+
+
+        /* ==========================================
+           MOBILE
+        ========================================== */
+
+        @media (max-width: 380px) {
+
+            .content {
+                padding-left: 14px;
+                padding-right: 14px;
+            }
+
+            .dp {
+                font-size: 62px;
+            }
+
+            .boss-name {
+                font-size: 29px;
+            }
+
+            .boss-sub {
+                font-size: 8px;
+            }
+
+            .middle {
+                width: calc(100% - 28px);
+            }
+
+            h1 {
+                font-size: 34px;
+            }
+
+            .description {
+                font-size: 13px;
+            }
+
+            .telegram {
+                height: 70px;
+            }
+
+            .telegram-icon {
+                width: 52px;
+                height: 52px;
+                min-width: 52px;
+            }
+
+            .telegram-title {
+                font-size: 23px;
+            }
+
+        }
+
+
+        /* ==========================================
+           SHORT SCREENS
+        ========================================== */
+
+        @media (max-height: 650px) {
+
+            .content {
+                padding-top: 16px;
+            }
+
+            .dp {
+                font-size: 58px;
+            }
+
+            .boss-name {
+                font-size: 28px;
+            }
+
+            .middle {
+                transform:
+                    translate(-50%, -48%);
+            }
+
+            .description {
+                margin-top: 10px;
+            }
+
+            .telegram {
+                margin-top: 18px;
+                height: 68px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+    <div class="page">
+
+        <!-- Background -->
+        <div class="circle-one"></div>
+        <div class="circle-two"></div>
+
+
+        <div class="content">
+
+
+            <!-- ==========================================
+                 BRAND
+            =========================================== -->
+
+            <div class="logo">
+
+                <div class="dp">
+                    DP
+                </div>
+
+                <div class="boss">
+
+                    <div class="boss-name">
+                        BOSS
+                    </div>
+
+                    <div class="boss-sub">
+                        NUMBER PREDICTION
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 CENTER AREA
+            =========================================== -->
+
+            <div class="middle">
+
+
+                <div class="label">
+
+                    <span class="dot"></span>
+
+                    DAILY NUMBER UPDATES
+
+                </div>
+
+
+                <h1>
+
+                    Number Prediction
+                    <br>
+
+                    <span>DP BOSS</span>
+
+                </h1>
+
+
+                <p class="description">
+
+                    Daily number prediction updates aur latest
+                    information ke liye hamare Telegram channel
+                    ko join karein.
+
+                </p>
+
+
+                <!-- ======================================
+                     TELEGRAM BUTTON
+                ======================================= -->
+
+                <a
+                    class="telegram"
+                    href="https://t.me/+JvD6RGqvp_o0NjY1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Join DP BOSS Telegram Channel"
+                >
+
+                    <div class="telegram-icon">
+
+                        <svg
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+
+                            <path d="M21.8 3.2c-.3-.3-.8-.4-1.2-.2L2.7 10.1c-.7.3-.7 1.3 0 1.6l4.6 1.7 1.8 5.7c.2.7 1.1.9 1.6.4l2.6-2.5 4.8 3.5c.6.4 1.4.1 1.6-.6l3.2-15.5c.1-.4 0-.9-.3-1.2ZM9.2 17.1l-.9-2.9 8.7-6.1-7.1 7.2-.7 1.8Zm2.7-1.3-.9-.7 7.1-7.2-5.4 7.9-.8.0Z"/>
+
+                        </svg>
+
+                    </div>
+
+
+                    <div class="telegram-text">
+
+                        <span class="join-text">
+                            JOIN OUR
+                        </span>
+
+                        <span class="telegram-title">
+                            TELEGRAM
+                        </span>
+
+                    </div>
+
+
+                    <div class="arrow">
+                        »
+                    </div>
+
+                </a>
+
+
+            </div>
+
+
+            <!-- ==========================================
+                 FOOTER
+            =========================================== -->
+
+            <div class="bottom">
+
+                <strong>DP BOSS</strong>
+                • Number Prediction Channel
+
+                <br>
+
+                Join our Telegram channel for regular updates.
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</body>
+</html>
